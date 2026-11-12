@@ -1,53 +1,136 @@
-# Cleora v0.1.0 Release Notes
+<p align="center">
+  <img src="logo.png" alt="Cleora Logo" width="112" />
+</p>
 
-**Release Date:** 2026-11-13  
-**Tag:** `v0.1.0`
+<h1 align="center">Cleora</h1>
 
-Welcome to the initial public release of **Cleora**, an offline-first, cross-platform storage advisor, desktop software auditor, and safe cleanup engine by **Aur Labs**.
+<p align="center">
+  <strong>See what fills your disk, and clean it up safely.</strong><br />
+  Offline-first, cross-platform personal storage advisor, desktop software auditor, and safe cleanup engine by <strong>Aur Labs</strong>.
+</p>
 
----
-
-## Highlights in v0.1.0
-
-### 1. Runtime OS & Package Manager Auto-Detection
-Cleora automatically detects your operating system, Linux distribution, and installed package managers at runtime, adapting its probes, cleanup commands, drive move commands, and software uninstaller automatically:
-- **Linux:** Arch Linux (`Pacman`), Ubuntu / Debian / Mint (`APT / DPKG`), Fedora / RHEL (`DNF / RPM`), openSUSE (`Zypper`), `Flatpak`, `Snap`, and `systemd` journal logs.
-- **Windows:** PowerShell commands, `%LOCALAPPDATA%` / `%APPDATA%` cache probes, `Clear-RecycleBin`, NTFS directory junctions (`mklink /J`), and `winget` software management.
-- **macOS:** `~/Library/Caches`, `~/Library/Developer/Xcode/DerivedData`, Homebrew (`brew cleanup`), `~/.Trash`, and `/Applications` + Homebrew Cask auditing.
-
-### 2. Desktop Installed Software Audit & Complete Uninstaller
-- Scans installed desktop software across **Flatpak**, **Snap**, **Pacman**, **APT/DPKG**, **DNF/RPM**, standalone `/opt` or user `.desktop` apps, **Windows Winget**, and **macOS Applications / Homebrew Cask**.
-- Computes **total disk footprint** (`App Size + User Config, Cache, and Sandbox Data`) so you can see the real space an app uses.
-- Provides one-click uninstallation for supported package managers plus a **Complete Uninstall Guide** with copyable commands and associated user data paths.
-
-### 3. Home & System Space Audit + Clean Up Hub
-- Inspects high-impact space consumers (`~/.gradle`, `~/.cargo`, `~/.pub-cache`, `~/Android`, `~/.android`, `~/.var`, `~/.cache`, `/var/cache/pacman`, `/var/cache/apt/archives`, `/var/cache/dnf`, `/var/lib/flatpak`, `/var/log/journal`, OS Trash, and large/old files in `Desktop` and `Downloads`).
-- Includes one-click allow-listed cache cleanups, a copyable **Quick Win Script**, and safe secondary-drive offloading via verified symbolic links with one-click undo.
-
-### 4. Interactive Storage Map, BLAKE3 Duplicates & Safe Recovery
-- **Storage Map:** Interactive treemap and folder drill-down for any directory.
-- **Duplicate Files Finder:** Byte-for-byte BLAKE3 hash verification that always keeps one primary copy protected.
-- **Reversible Trash & History:** Tracks cleanup operations in local SQLite and supports conflict-safe restoration.
-
-### 5. Branding, System Tray & Cross-Platform Packaging
-- Integrated official Cleora app icon (`icon.png`) and logo (`logo.png`) across the UI, window titlebar, installer bundles, and native **System Tray** (`Show Cleora` / `Quit Cleora`).
-- Clean, non-overlapping table and header badges across all screen sizes.
+<p align="center">
+  <strong>Latest Release:</strong> <code>v0.1.0</code> · <strong>Platforms:</strong> Linux (Arch, Ubuntu, Debian, Fedora, openSUSE) · Windows · macOS
+</p>
 
 ---
 
-## Download & Install Assets
+## Overview
 
-| Platform | Artifact | Notes |
-| --- | --- | --- |
-| **Linux (All Distros)** | `Cleora_0.1.0_amd64.AppImage` | Portable AppImage (`chmod +x` and run) |
-| **Debian / Ubuntu / Mint** | `Cleora_0.1.0_amd64.deb` | Install via `sudo apt install ./Cleora_0.1.0_amd64.deb` |
-| **Fedora / RHEL / openSUSE** | `Cleora-0.1.0-1.x86_64.rpm` | Install via `sudo dnf install ./Cleora-0.1.0-1.x86_64.rpm` |
-| **Windows (x64)** | `cleora.exe` | Standalone executable for Windows 10 / 11 (requires WebView2 Runtime, pre-installed on Windows 11) |
+Cleora is built on the philosophy that a system cleaner should be a **careful, transparent advisor**, never a blind cleaner. At runtime, Cleora automatically detects your operating system, Linux distribution, and installed package managers, then adapts its storage audit, cleanup commands, drive-offloading scripts, and software uninstaller to match your machine.
+
+### Key Features
+
+- **Home & System Space Audit:** Plain-English breakdown of your biggest space users (package caches, browser & tool caches, Gradle, Cargo, Pub/Dart, Android SDK, Docker, Flatpak, Snap, Xcode DerivedData, and `Desktop` / `Downloads` large files & installers).
+- **Runtime OS & Package Manager Detection:** Automatically detects `Arch/Pacman`, `Ubuntu/Debian APT`, `Fedora DNF`, `openSUSE Zypper`, `Flatpak`, `Snap`, `Windows PowerShell + Winget`, and `macOS Homebrew`, generating native commands for your system.
+- **Desktop Installed Software Audit & Complete Uninstaller:** Discovers installed desktop apps across Flatpak, Snap, Pacman, APT/DPKG, DNF/RPM, standalone `/opt` or user apps, Windows `winget`, and macOS `/Applications` + Homebrew Cask. Calculates total footprint (app binary + user config/cache/sandbox data) and provides one-click uninstall plus step-by-step complete removal commands.
+- **Safe 1-Click Tool Cleanups & Quick Win Script:** Executes strictly allow-listed cleanup actions (moving safe caches to OS Trash or invoking official package cache cleaners) and generates a copyable Quick Win script.
+- **Secondary Drive Mover (Symlink / Junction Offloading):** Safely moves heavy directories (`~/Android`, `~/.gradle`, `~/.cargo`, `~/.var`) to a secondary drive with verified symbolic links (or Windows junctions) and one-click undo/restore.
+- **Interactive Storage Map & Duplicate Files Finder:** Treemap visualization of folder sizes and byte-for-byte BLAKE3 cryptographic duplicate detection that always preserves a primary copy.
+- **Reversible Trash & Recovery History:** File cleanups move items to OS Trash or same-volume recovery vaults with conflict-safe restoration and local SQLite audit logs.
+- **System Tray Integration:** Runs cleanly with a native system tray icon (`Show Cleora` / `Quit Cleora`) and low-disk notifications.
 
 ---
 
-## Verification Summary
-- `pnpm build` (`tsc && vite build`): Passed
-- `cargo test --workspace`: 30/30 unit tests passed (`cleora-core`, `cleora-db`, `cleora-platform`, `cleora-policy`)
-- `cargo clippy --workspace -- -D warnings`: Passed with 0 warnings
+## Key Safety Invariants
 
+1. **No Automated Blind Deletion:** No file, directory, or software package is ever removed automatically based on age or pattern heuristics.
+2. **Cryptographic Proof for Duplicates:** Identical files are proven byte-for-byte using streaming BLAKE3 hashing, preserving at least one authoritative copy in every duplicate set.
+3. **Source Code & System Inviolability:** Directories like `src/`, `lib/`, `tests/`, `.git`, and core OS paths are strictly protected (`Risk Level R0`).
+4. **Honest Space Accounting:** Moving items to OS Trash or recovery vaults is reported transparently; immediate disk capacity is only freed when Trash is emptied.
+5. **Conflict-Safe Restoration:** Restoring a file never overwrites an existing file silently.
+6. **100% Offline & Private:** Zero accounts, zero telemetry, zero analytics tracking.
+
+---
+
+## Installation (v0.1.0)
+
+### Linux (All Distributions)
+- **Universal AppImage (Arch, Ubuntu, Debian, Fedora, openSUSE, Mint):**
+  ```bash
+  chmod +x Cleora_0.1.0_amd64.AppImage
+  ./Cleora_0.1.0_amd64.AppImage
+  ```
+- **Debian / Ubuntu / Linux Mint / Pop!_OS (`.deb`):**
+  ```bash
+  sudo apt install ./Cleora_0.1.0_amd64.deb
+  ```
+- **Fedora / RHEL / openSUSE (`.rpm`):**
+  ```bash
+  sudo dnf install ./Cleora-0.1.0-1.x86_64.rpm
+  ```
+
+### Windows
+- Download `cleora.exe` and run it directly on Windows 10 / 11 (uses the built-in Microsoft Edge WebView2 Runtime).
+
+---
+
+## Architecture & Technology Stack
+
+- **Desktop Shell:** Tauri 2 (native packaging, system tray, secure sandboxed IPC)
+- **Core Engine:** Rust (`cleora-core`, `cleora-platform`, `cleora-db`, `cleora-policy`, `cleora-test-fixtures`)
+- **Frontend UI:** React 19 + TypeScript + Vite + Tailwind CSS
+- **Local Persistence:** Embedded SQLite in WAL mode with foreign-key constraints
+- **Platform Integrations:** Linux (Freedesktop Trash, `statvfs`, `pkexec`), Windows (Recycle Bin, PowerShell, `winget`), macOS (`~/.Trash`, `osascript`, Homebrew)
+
+---
+
+## Workspace Structure
+
+```text
+Cleora/
+├── Cargo.toml                      # Root Cargo workspace (v0.1.0)
+├── package.json                    # Frontend dependencies & scripts (v0.1.0)
+├── icon.png                        # Master application icon
+├── logo.png                        # Master application logo
+├── docs/                           # Architecture specifications & charters
+├── crates/
+│   ├── cleora-core/                # Space hog advisor, scanner, duplicates, classification, mover, recovery
+│   ├── cleora-platform/            # Volumes, OS trash, multi-OS tool runner, software inventory
+│   ├── cleora-db/                  # SQLite connection, migrations, repositories
+│   ├── cleora-policy/              # R0-R4 risk levels, rules engine, protected path denylists
+│   └── cleora-test-fixtures/       # Mock polyglot project fixtures & synthetic trees
+├── src-tauri/                      # Tauri 2 app configuration, system tray, typed commands
+└── src/                            # React 19 UI
+```
+
+---
+
+## Building from Source
+
+### Prerequisites
+- **Rust:** `1.90+` (`rustup update stable`)
+- **Node.js:** `v20+`
+- **pnpm:** `v10+`
+- **Linux System Libraries:** `webkit2gtk-4.1`, `libappindicator3` / `libayatana-appindicator3`, `libssl-dev`, `build-essential`
+
+### Commands
+
+```bash
+# Install frontend dependencies
+pnpm install
+
+# Run development app
+pnpm tauri dev
+
+# Run full verification suite
+pnpm build
+cargo test --workspace
+cargo clippy --workspace -- -D warnings
+
+# Build Linux packages (.AppImage, .deb, .rpm)
+pnpm tauri build
+
+# Cross-compile Windows .exe from Linux (requires cargo-xwin + lld)
+pnpm tauri build --runner cargo-xwin --target x86_64-pc-windows-msvc --no-bundle
+```
+
+---
+
+## License
+
+Dual-licensed under either of:
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE))
+- MIT license ([LICENSE-MIT](LICENSE-MIT))
+
+at your option.
