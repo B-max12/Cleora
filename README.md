@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="Cleora Logo" width="112" />
+  <img src="https://github.com/B-max12/Cleora/blob/5e715ebade64385abc4cf2fcd3e70bace37bd033/icon.png" alt="Cleora Logo" width="112" />
 </p>
 
 <h1 align="center">Cleora</h1>
